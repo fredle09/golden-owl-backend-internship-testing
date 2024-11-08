@@ -1,5 +1,5 @@
 // src/score/score.controller.ts
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ScoreService } from './score.service';
 import { Score } from './score.schema';
 import { ResponseHandlerService } from 'src/common/response-handler.service';
@@ -17,6 +17,12 @@ export class ScoreController {
   async findAll(): Promise<ResponseDto<Score[]>> {
     const scores = await this.scoreService.findAll();
     return this.responseHandler.success(scores, 'Scores fetched successfully');
+  }
+
+  @Get("range-counts")
+  async getRangeCounts(@Query('subject') subject: string): Promise<ResponseDto<any>> {
+    const result = await this.scoreService.getRangeCounts({ subject });
+    return this.responseHandler.success(result, 'Range counts fetched successfully');
   }
 
   // Lấy điểm số theo ID
