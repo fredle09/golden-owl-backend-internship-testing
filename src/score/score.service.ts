@@ -13,7 +13,7 @@ export class ScoreService {
 
   // Lấy tất cả điểm số
   async findAll(params?: { page?: number, limit?: number }): Promise<Score[]> {
-    const { page = 1, limit = 100 } = params;
+    const { page = 1, limit = 100 } = params ?? {};
     return this.scoreModel
       .find()
       .skip((page - 1) * limit)
