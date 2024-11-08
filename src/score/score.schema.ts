@@ -2,7 +2,7 @@
 import { Schema, Document } from 'mongoose';
 
 export const ScoreSchema = new Schema({
-  studentId: { type: Number, required: true, index: true, unique: true },
+  studentId: { type: String, required: true, index: true, unique: true },
   math: { type: Number, required: true },
   literature: { type: Number, required: true },
   foreignLanguage: { type: Number, required: true },
@@ -16,7 +16,7 @@ export const ScoreSchema = new Schema({
 });
 
 export interface Score extends Document {
-  studentId: number;
+  studentId: String;
   math: number;
   literature: number;
   foreignLanguage: number;

@@ -8,7 +8,7 @@ import { ScoreModule } from './score/score.module';
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRootAsync({
       useFactory: async () => ({
-        uri: process.env.MONGODB_URI,  // Lấy URI từ biến môi trường
+        uri: process.env.MONGODB_URI, // Lấy URI từ biến môi trường
       }),
     }),
     ScoreModule

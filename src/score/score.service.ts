@@ -12,8 +12,12 @@ export class ScoreService {
   ) { }
 
   // Lấy tất cả điểm số
-  async findAll(): Promise<Score[]> {
-    return this.scoreModel.find().exec();
+  async findAll(params?: { page?: number, limit?: number }): Promise<Score[]> {
+    const { page = 1, limit = 100 } = params;
+    return this.scoreModel
+      .find()
+      .skip((page - 1) * limit)
+      .limit(limit).exec();
   }
 
   // Lấy điểm số theo ID
@@ -26,8 +30,8 @@ export class ScoreService {
   }): Promise<Score> {
     return this.scoreModel
       .findOne({
-        ...(studentId && { studentId }),
         ...(_id && { _id: new ObjectId(_id) }),
+        ...(studentId && { studentId }),
       })
       .exec();
   }

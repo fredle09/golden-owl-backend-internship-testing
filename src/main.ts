@@ -11,6 +11,22 @@ async function bootstrap() {
     defaultVersion: '1',       // Default to version 1
   });
 
-  await app.listen(process.env.PORT ?? 3000);
+  app.enableCors({
+    origin: (origin, callback) => {
+      // Regular expression to match any origin starting with https://golden-owl
+      const allowedRegex = /^(https:\/\/golden-owl-frontend-intership-testing.*)$/;
+
+      // Check if the origin is either localhost:3000 or matches the regex for golden-owl
+      if (typeof origin === "undefined" || origin === 'http://localhost:3000' || (origin && allowedRegex.test(origin))) {
+        callback(null, true);  // Allow the request
+      } else {
+        callback(new Error('Not allowed by CORS'));  // Reject the request
+      }
+    },
+    methods: 'GET,POST,PUT,DELETE',  // Allow specific HTTP methods (optional)
+    allowedHeaders: 'Content-Type, Authorization',  // Allow specific headers (optional)
+  });
+
+  await app.listen(process.env.PORT ?? 3001);
 }
 bootstrap();
