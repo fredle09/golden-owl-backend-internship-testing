@@ -6,6 +6,12 @@ import { Score } from './score.schema';
 import { ObjectId } from 'mongodb';
 import { SCORE_RANGES, SUBJECTS } from 'src/common/dto/constants';
 
+const groupFields = {
+  'group-a-0': ['math', 'physics', 'chemistry'],
+  'group-a-1': ['math', 'physics', 'foreignLanguage'],
+  'group-b-0': ['math', 'chemistry', 'biology']
+};
+
 @Injectable()
 export class ScoreService {
   constructor(
@@ -25,12 +31,12 @@ export class ScoreService {
         const [sortField, sortOrder] = item.split(':');
         const order = ['asc', '1'].includes(sortOrder?.toLowerCase()) ? 1 : -1; // -1 cho descending, 1 cho ascending
         // Nếu sortField là "group-a-0", chúng ta tính tổng các điểm trước khi sắp xếp
-        if (sortField === 'group-a-0') {
-          // Thêm bước tính tổng của các trường `math`, `physical`, và `chemistry`
+        if (groupFields[sortField]) {
+          const fieldsToSum = groupFields[sortField];
           aggregationPipeline.push({
             $addFields: {
-              'group-a-0': {
-                $add: ['$math', '$physics', '$chemistry']
+              [sortField]: {
+                $add: fieldsToSum.map(field => `$${field}`)
               }
             }
           });
