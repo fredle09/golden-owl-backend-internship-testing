@@ -89,10 +89,18 @@ export class ScoreService {
     // Build the aggregation pipeline
     const rangeProjection = SUBJECTS.reduce((acc, sub) => {
       acc[`${sub}-ranges`] = {
-        [SCORE_RANGES.LESS_THAN_4]: { $cond: [{ $lt: [`$${sub}`, 4] }, 1, 0] },
-        [SCORE_RANGES.BETWEEN_4_AND_6]: { $cond: [{ $and: [{ $gte: [`$${sub}`, 4] }, { $lt: [`$${sub}`, 6] }] }, 1, 0] },
-        [SCORE_RANGES.BETWEEN_6_AND_8]: { $cond: [{ $and: [{ $gte: [`$${sub}`, 6] }, { $lt: [`$${sub}`, 8] }] }, 1, 0] },
-        [SCORE_RANGES.GREATER_THAN_OR_EQUAL_8]: { $cond: [{ $gte: [`$${sub}`, 8] }, 1, 0] },
+        [SCORE_RANGES.LESS_THAN_4]: {
+          $cond: [{ $and: [{ $lt: [`$${sub}`, 4] }, { $ne: [`$${sub}`, null] }] }, 1, 0]
+        },
+        [SCORE_RANGES.BETWEEN_4_AND_6]: {
+          $cond: [{ $and: [{ $gte: [`$${sub}`, 4] }, { $lt: [`$${sub}`, 6] }, { $ne: [`$${sub}`, null] }] }, 1, 0]
+        },
+        [SCORE_RANGES.BETWEEN_6_AND_8]: {
+          $cond: [{ $and: [{ $gte: [`$${sub}`, 6] }, { $lt: [`$${sub}`, 8] }, { $ne: [`$${sub}`, null] }] }, 1, 0]
+        },
+        [SCORE_RANGES.GREATER_THAN_OR_EQUAL_8]: {
+          $cond: [{ $and: [{ $gte: [`$${sub}`, 8] }, { $ne: [`$${sub}`, null] }] }, 1, 0]
+        },
       };
       return acc;
     }, {});
