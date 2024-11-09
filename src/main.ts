@@ -15,7 +15,7 @@ async function bootstrap() {
     origin: (origin, callback) => {
       console.log('>> Origin:', origin);
       // Regular expression to match any origin starting with https://golden-owl
-      const allowedRegex = /^(https:\/\/golden-owl-frontend-intership-testing.*)$/;
+      const allowedRegex = /^(https:\/\/golden-owl-frontend-internship-testing.*)$/;
 
       // Check if the origin is either localhost:3000 or matches the regex for golden-owl
       if (typeof origin === "undefined" || origin === 'http://localhost:3000' || allowedRegex.test(origin)) {
