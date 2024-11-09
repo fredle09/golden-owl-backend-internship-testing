@@ -14,8 +14,17 @@ export class ScoreController {
 
   // Lấy tất cả điểm số
   @Get()
-  async findAll(): Promise<ResponseDto<Score[]>> {
-    const scores = await this.scoreService.findAll();
+  async findAll(
+    @Query('sort') sort?: string | string[],
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ): Promise<ResponseDto<Score[]>> {
+    const scores = await this.scoreService.findAll({
+      page: page ? Number(page) : undefined,
+      limit: limit ? Number(limit) : undefined,
+      sort: typeof sort === 'string' ? [sort] : sort,
+    });
+
     return this.responseHandler.success(scores, 'Scores fetched successfully');
   }
 

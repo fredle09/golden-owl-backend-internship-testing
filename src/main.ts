@@ -13,7 +13,6 @@ async function bootstrap() {
 
   app.enableCors({
     origin: (origin, callback) => {
-      console.log('>> Origin:', origin);
       // Regular expression to match any origin starting with https://golden-owl
       const allowedRegex = /^(https:\/\/golden-owl-frontend-internship-testing.*)$/;
 

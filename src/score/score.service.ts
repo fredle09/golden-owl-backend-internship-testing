@@ -13,12 +13,47 @@ export class ScoreService {
   ) { }
 
   // Lấy tất cả điểm số
-  async findAll(params?: { page?: number, limit?: number }): Promise<Score[]> {
-    const { page = 1, limit = 100 } = params ?? {};
+  async findAll(params?: { page?: number, limit?: number, sort?: string[] }): Promise<Score[]> {
+    const { page = 1, limit = 100, sort } = params ?? {};
+
+    // Khởi tạo mảng các tiêu chí sắp xếp
+    let sortCriteria = {};
+    let aggregationPipeline = [];
+
+    if (sort) {
+      sort.forEach(item => {
+        const [sortField, sortOrder] = item.split(':');
+        const order = ['asc', '1'].includes(sortOrder?.toLowerCase()) ? 1 : -1; // -1 cho descending, 1 cho ascending
+        // Nếu sortField là "group-a-0", chúng ta tính tổng các điểm trước khi sắp xếp
+        if (sortField === 'group-a-0') {
+          // Thêm bước tính tổng của các trường `math`, `physical`, và `chemistry`
+          aggregationPipeline.push({
+            $addFields: {
+              'group-a-0': {
+                $add: ['$math', '$physics', '$chemistry']
+              }
+            }
+          });
+        }
+
+        // Cập nhật criteria sắp xếp
+        sortCriteria[sortField] = order;
+      });
+    }
+
+    // Nếu có pipeline tính toán sum, thêm bước sắp xếp
+    if (Object.keys(sortCriteria).length > 0) {
+      aggregationPipeline.push({
+        $sort: sortCriteria
+      });
+    }
+
+    // Thực hiện truy vấn với phân trang và sắp xếp
     return this.scoreModel
-      .find()
+      .aggregate(aggregationPipeline)
       .skip((page - 1) * limit)
-      .limit(limit).exec();
+      .limit(limit)
+      .exec();
   }
 
   // Lấy điểm số theo ID
